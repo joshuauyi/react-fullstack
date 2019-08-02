@@ -7,11 +7,16 @@
     "build": "webpack -p",
     "deploy": "npm run build && git commit -a -m deployment && git push heroku master",
     "dev": "webpack-dev-server --open",
-    "server": "cross-env NODE_ENV=production babel-node src/server",
+    "server-alt": "cross-env NODE_ENV=production babel-node src/server",
     "server-dev": "nodemon src/server --exec babel-node src/server",
     "start-dev": "concurrently \"npm run server-dev\" \"npm run dev\"",
     "server-spec": "babel-node src/server/server.spec",
-    "start": "npm run server"
+    "start": "npm run server",
+    "initialize": "babel-node src/server/initialize-db.js",
+
+
+
+    "server": "babel-node src/server/server"
   },
   "repository": {
     "type": "git",
