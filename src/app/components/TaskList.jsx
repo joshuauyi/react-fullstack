@@ -1,37 +1,36 @@
+import { connect } from 'react-redux';
 import React from 'react';
-import {connect} from "react-redux";
-import {requestTaskCreation} from "../store/mutations";
-import {Link} from "react-router-dom";
+import { requestTaskCreation } from '../store/mutations'
+import { ConnectedTaskListItem } from './TaskListItem'
 
-export const TaskList = ({tasks, name, id, createNewTask}) => (
-    <div>
-        <h3>{name}</h3>
+export const TaskList = ({tasks,name,createNewTask,id})=>(
+    <div className="card p-2 m-2">
+        <h2>
+            {name}
+        </h2>
         <div>
-            {tasks.map(task => (
-                <Link key={task.id} to={`task/${task.id}`}>
-                    <div>{task.name}</div>
-                </Link>
+            {tasks.map(task=>(
+                <ConnectedTaskListItem {...task} key={task.id}/>
             ))}
         </div>
-        <button onClick={() => createNewTask(id)}>Add New</button>
+        <div>
+            <button className="btn btn-primary btn-block mt-2" onClick={()=>createNewTask(id)}>Add New</button>
+        </div>
     </div>
-)
+);
 
-function mapStateToProps(state, ownProps) {
-    let groupID = ownProps.id;
+const mapStateToProps = (state, {name, id})=>{
     return {
-        name: ownProps.name,
-        id: groupID,
-        tasks: state.tasks.filter(task => task.group === groupID)
-    }
-}
+        name:name,
+        tasks: state.tasks.filter(task=>task.group === id),
+        id
+    };
+};
 
-function mapDispatchToProps(dispatch, ownProps) {
-    return {
-        createNewTask(id) {
-            dispatch(requestTaskCreation(id))
-        }
+const mapDispatchToProps = (dispatch, {id})=>({
+    createNewTask(){
+        dispatch(requestTaskCreation(id));
     }
-}
+});
 
 export const ConnectedTaskList = connect(mapStateToProps, mapDispatchToProps)(TaskList);

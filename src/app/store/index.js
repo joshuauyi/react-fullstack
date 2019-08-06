@@ -1,47 +1,15 @@
-import {applyMiddleware, createStore, combineReducers} from 'redux';
-import {defaultState} from "../../server/defaultState";
-import {createLogger} from "redux-logger";
-import crateSagaMiddleware from 'redux-saga';
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga'
+import {createLogger} from 'redux-logger'
 
-const sagaMiddleware = crateSagaMiddleware();
-import * as sagas from './sagas.mock';
-import * as mutations from './mutations';
+import { reducer } from './reducer'
+import * as sagas from './sagas'
+
+const sagaMiddleware = createSagaMiddleware();
 
 export const store = createStore(
-    combineReducers({
-        tasks(tasks = defaultState.tasks, action) {
-            switch (action.type) {
-                case mutations.CREATE_TASK:
-                    return [...tasks, {
-                        id: action.taskID,
-                        name: 'New Task',
-                        group: action.groupID,
-                        owner: action.ownerID,
-                        isComplete: false
-                    }];
-                case mutations.SET_TASK_COMPLETE:
-                    return tasks.map(task => (task.id === action.taskID) ? {...task, isComplete: action.isComplete}
-                        : task);
-                case mutations.SET_TASK_NAME:
-                    return tasks.map(task => (task.id === action.taskID) ? {...task, name: action.name}
-                        : task);
-                case mutations.SET_TASK_GROUP:
-                    return tasks.map(task => (task.id === action.taskID) ? {...task, group: action.groupID}
-                        : task);
-            }
-
-            return tasks;
-        },
-        comments(comments = defaultState.comments, action) {
-            return comments;
-        },
-        groups(groups = defaultState.groups, action) {
-            return groups;
-        },
-        users(users = defaultState.users, action) {
-            return users;
-        }
-    }), applyMiddleware(createLogger(), sagaMiddleware)
+    reducer,
+    applyMiddleware(createLogger(), sagaMiddleware)
 );
 
 for (let saga in sagas) {
